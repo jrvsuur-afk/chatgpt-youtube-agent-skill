@@ -1,0 +1,26 @@
+{
+  "name": "youtube-agent",
+  "version": "0.1.0",
+  "description": "Eleven skills for YouTube scripts, packaging, research, retention, editing, planning, comments, SEO, chapters, Shorts, and channel audits.",
+  "author": {
+    "name": "Jake Schincariol"
+  },
+  "homepage": "https://github.com/Jakeschincariol/chatgpt-youtube-agent-skill",
+  "repository": "https://github.com/jrvsuur-afk/chatgpt-youtube-agent-skill",
+  "license": "MIT",
+  "keywords": ["youtube", "creator", "scripts", "seo", "shorts", "analytics"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "YouTube Agent",
+    "shortDescription": "Plan better YouTube videos",
+    "longDescription": "Use all eleven yt-* skills to plan uploads, write and score hooks, pair titles with thumbnails, research outliers, analyze retention, draft edit decisions, replies, descriptions, chapters, Shorts, and channel audits. Includes six local Python helpers. You review the output and publish it yourself.",
+    "developerName": "Jake Schincariol",
+    "category": "Productivity",
+    "capabilities": ["Interactive", "Write"],
+    "defaultPrompt": [
+      "Help me turn a video idea into a script, title, and thumbnail brief.",
+      "Analyze my transcript and retention export, then suggest the biggest improvement.",
+      "Plan my next week of YouTube uploads around the time and footage I have."
+    ]
+  }
+}
