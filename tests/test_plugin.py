@@ -1,5 +1,6 @@
 """Validate the skills-only plugin and exercise its bundled helpers offline."""
 
+import hashlib
 import json
 import re
 import subprocess
@@ -10,9 +11,23 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_SKILLS = {
+UPSTREAM_SKILLS = {
     "yt-audit", "yt-chapters", "yt-comment", "yt-edit", "yt-package", "yt-plan",
     "yt-retention", "yt-script", "yt-seo", "yt-shorts", "yt-viral",
+}
+EXPECTED_SKILLS = UPSTREAM_SKILLS | {"yt-caliks"}
+CALIKS_ROUTES = {
+    "seo": "yt-seo",
+    "package": "yt-package",
+    "shorts": "yt-shorts",
+    "script": "yt-script",
+    "plan": "yt-plan",
+    "viral": "yt-viral",
+    "retention": "yt-retention",
+    "audit": "yt-audit",
+    "chapters": "yt-chapters",
+    "edit": "yt-edit",
+    "comment": "yt-comment",
 }
 
 
@@ -37,12 +52,15 @@ class PluginStructureTests(unittest.TestCase):
         interface = portable["extensions"]["com.openai"]["interface"]
         self.assertEqual(interface, codex["interface"])
         self.assertEqual(interface["displayName"], "YouTube Agent")
+        self.assertIn("yt-caliks", portable["description"])
+        self.assertIn("yt-caliks", portable["keywords"])
+        self.assertIn("yt-caliks", interface["longDescription"])
         self.assertTrue(0 < len(interface["shortDescription"]) <= 30)
         self.assertTrue(1 <= len(interface["defaultPrompt"]) <= 3)
         for prompt in interface["defaultPrompt"]:
             self.assertTrue(0 < len(prompt) <= 128)
 
-    def test_all_eleven_skills_are_discoverable(self):
+    def test_upstream_and_caliks_skills_are_discoverable(self):
         skill_root = (ROOT / read_json(".codex-plugin/plugin.json")["skills"]).resolve()
         self.assertEqual(skill_root, ROOT / "skills")
         paths = list(skill_root.glob("*/SKILL.md"))
@@ -57,6 +75,51 @@ class PluginStructureTests(unittest.TestCase):
                 self.assertIsNotNone(frontmatter, "Missing skill name or description")
                 self.assertEqual(frontmatter.group(1), path.parent.name)
                 self.assertIn("Use", frontmatter.group(2))
+
+    def test_original_upstream_skill_hashes_are_unchanged(self):
+        baseline = read_json("tests/upstream_skill_hashes.json")
+        self.assertEqual(set(baseline), UPSTREAM_SKILLS)
+        for name, expected_hash in baseline.items():
+            with self.subTest(skill=name):
+                self.assertRegex(expected_hash, r"^[0-9a-f]{64}$")
+                contents = (ROOT / "skills" / name / "SKILL.md").read_bytes()
+                self.assertEqual(hashlib.sha256(contents).hexdigest(), expected_hash)
+
+    def test_project_skill_discovery_links_resolve(self):
+        for directory in (".agents/skills", ".codex/skills"):
+            root = ROOT / directory
+            self.assertEqual({p.name for p in root.iterdir()}, EXPECTED_SKILLS)
+            for name in EXPECTED_SKILLS:
+                with self.subTest(directory=directory, skill=name):
+                    link = root / name
+                    self.assertTrue(link.is_symlink())
+                    self.assertEqual(link.resolve(), ROOT / "skills" / name)
+                    self.assertTrue((link / "SKILL.md").is_file())
+
+    def test_caliks_profile_and_upstream_routes_resolve(self):
+        skill_root = ROOT / "skills" / "yt-caliks"
+        text = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+        profile_references = re.findall(r"\]\((\.\./\.\./profiles/[^)]+)\)", text)
+        self.assertEqual(profile_references, ["../../profiles/caliks-art-academy.md"])
+        self.assertEqual(
+            (skill_root / profile_references[0]).resolve(),
+            ROOT / "profiles" / "caliks-art-academy.md",
+        )
+        self.assertTrue((skill_root / profile_references[0]).is_file())
+        routes = re.findall(
+            r"^\| `([a-z]+)` / [^|\n]+ \| \[(yt-[a-z]+)\]"
+            r"\((\.\./yt-[a-z]+/SKILL\.md)\) \|$",
+            text,
+            re.MULTILINE,
+        )
+        self.assertEqual(len(routes), len(CALIKS_ROUTES))
+        self.assertEqual({alias: name for alias, name, _ in routes}, CALIKS_ROUTES)
+        self.assertEqual({name for _, name, _ in routes}, UPSTREAM_SKILLS)
+        for alias, name, reference in routes:
+            with self.subTest(subtask=alias):
+                target = (skill_root / reference).resolve()
+                self.assertEqual(target, ROOT / "skills" / name / "SKILL.md")
+                self.assertTrue(target.is_file())
 
     def test_marketplace_resolves_to_the_plugin_root(self):
         marketplace = read_json(".agents/plugins/marketplace.json")

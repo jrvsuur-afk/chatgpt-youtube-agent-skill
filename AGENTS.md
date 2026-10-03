@@ -21,6 +21,16 @@ ve dosyasını oku. Profil seçimi için şu sırayı uygula:
    önce `profiles/caliks-art-academy.md` dosyasını oku. Kullanıcının verdiği başka
    kanala ait açık bağlamı bu varsayımla değiştirme.
 
+## yt-caliks giriş noktası
+
+Çalık'S Art Academy için tek giriş noktası `skills/yt-caliks/SKILL.md` dosyasıdır.
+Kullanıcı `yt-caliks` istediğinde bu skill'i oku; her çağrıda önce kanal profilini,
+ardından isteğe uygun upstream skill'i okuma kuralını uygula. Yalnızca `yt-caliks`
+ve yapılandırılmış video analizi verilmişse varsayılan görev SEO paketidir.
+`yt-caliks package`, `yt-caliks shorts`, `yt-caliks script` gibi açık alt görevler
+bu varsayılandan önceliklidir. Diğer kanallar için yukarıdaki açık profil seçimi
+kuralları geçerliliğini korur.
+
 ## Skill'lerle birlikte kullanım
 
 Bu yönlendirme mevcut 11 YouTube skill'inin tamamı için geçerlidir:

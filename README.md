@@ -1,7 +1,7 @@
 # The YouTube agent skill
 
-Eleven ChatGPT skills that run a YouTube channel. Free, MIT, no signup, no API key, nothing to
-connect.
+Eleven upstream ChatGPT skills plus `yt-caliks`, a dedicated entry point for Çalık'S Art
+Academy. Free, MIT, no signup, no API key, nothing to connect.
 
 This repository is a fork of [Jake Schincariol's original project](https://github.com/Jakeschincariol/chatgpt-youtube-agent-skill).
 The original skills and helper scripts retain his attribution and MIT license.
@@ -20,8 +20,8 @@ channel, not by how big the channel is.
 
 ### YouTube Agent plugin
 
-The repository is also a skills-only **YouTube Agent** plugin. It exposes all eleven `yt-*`
-skills from the original `skills/` directory, including their Python helpers and hook formulas.
+The repository is also a skills-only **YouTube Agent** plugin. It exposes `yt-caliks` and
+all eleven upstream `yt-*` skills from `skills/`, including their Python helpers and hook formulas.
 Python 3 runs the helpers; no MCP server, API key, or new Python dependency is required.
 
 From this checkout, register the local marketplace and install the plugin with a recent Codex CLI:
@@ -32,8 +32,9 @@ codex plugin list --marketplace youtube-agent-marketplace --available --json
 codex plugin add youtube-agent@youtube-agent-marketplace
 ```
 
-Restart Codex or start a new session after installation. Select **YouTube Agent**, or invoke a
-skill such as `yt-script`, `yt-package`, or `yt-audit` from the skill picker.
+Restart Codex or start a new session after installation. Select **YouTube Agent** and invoke
+`yt-caliks` for Çalık'S Art Academy, or select an upstream skill from the skill picker.
+After updating an installed plugin, reload/reinstall it using the host's supported flow.
 
 `plugin.json` is the portable Agent Plugins 1.0 manifest for compatible Codex/ChatGPT hosts.
 `.codex-plugin/plugin.json` is the Codex compatibility manifest and points to `./skills/`.
@@ -58,23 +59,28 @@ python3 -B -m unittest discover -s tests -v
 Paste this link into ChatGPT and say **install skill**:
 
 ```
-https://github.com/Jakeschincariol/chatgpt-youtube-agent-skill
+https://github.com/jrvsuur-afk/chatgpt-youtube-agent-skill
 ```
 
 Or do it yourself:
 
 ```bash
-git clone https://github.com/Jakeschincariol/chatgpt-youtube-agent-skill
+git clone https://github.com/jrvsuur-afk/chatgpt-youtube-agent-skill
+mkdir -p ~/.codex/skills ~/.codex/profiles
 cp -r chatgpt-youtube-agent-skill/skills/yt-* ~/.codex/skills/
+cp -r chatgpt-youtube-agent-skill/profiles/. ~/.codex/profiles/
 ```
 
-Restart the app and the skills are available. Project-local instead of global: copy the same
-folders into your repo's `.codex/skills/`.
+For `yt-caliks`, use this fork's checkout; the original repository contains the eleven
+upstream skills. Restart the app after copying. Project-local instead of global: copy the
+skill folders into `.codex/skills/` and the profiles into `.codex/profiles/`. This checkout
+already provides `.agents/skills/` and `.codex/skills/` links to its canonical `skills/` folders.
 
-## The eleven
+## Skills
 
 | skill | what it does |
 |---|---|
+| `yt-caliks` | reads the Çalık'S profile and routes to the appropriate upstream skill |
 | `yt-script` | writes the script off 21 hook formulas, scores the hook |
 | `yt-package` | title and thumbnail linted as one pairing |
 | `yt-viral` | finds what is working in your niche, ranked by channel-relative lift |
@@ -86,6 +92,24 @@ folders into your repo's `.codex/skills/`.
 | `yt-chapters` | chapter markers off the transcript |
 | `yt-shorts` | finds the Shorts hiding in a long video |
 | `yt-audit` | reads a channel and says what is actually wrong |
+
+## Çalık'S Art Academy entry point
+
+[`yt-caliks`](skills/yt-caliks/SKILL.md) reads `profiles/caliks-art-academy.md` on every
+invocation, then reads the appropriate upstream instructions. With only a structured
+video analysis, it defaults to the seven-part SEO package:
+
+```text
+yt-caliks
+[Video analizi]
+```
+
+Explicit subtasks take priority, such as `yt-caliks package` for title + thumbnail,
+`yt-caliks shorts` for Shorts extraction, or `yt-caliks script` for a script. It also
+supports `seo`, `plan`, `viral`, `retention`, `audit`, `chapters`, `edit`, and `comment`.
+Each subtask keeps its upstream technical workflow while applying relevant channel rules.
+Structured analyses are used without reanalyzing raw footage. No content task edits files,
+commits, or pushes. The profile and referenced upstream folders must travel with this skill.
 
 ## Your voice
 
@@ -120,7 +144,8 @@ if needed. The eleven skills and the global voice profile remain separate.
 ### Automatic profile routing
 
 When this repository is the active workspace and the host reads its root
-[`AGENTS.md`](AGENTS.md), all eleven `yt-*` skills read the relevant channel profile first.
+[`AGENTS.md`](AGENTS.md), the eleven upstream `yt-*` skills read the relevant channel profile
+first. The dedicated `yt-caliks` entry point reads its profile through its own instructions.
 The default is `profiles/caliks-art-academy.md`; a structured video analysis without
 another channel also selects Çalık'S Art Academy. An explicit other channel/profile uses
 its match under `profiles/`, or reports that a new profile is needed. Channel preferences

@@ -1,21 +1,21 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "youtube-agent",
-  "version": "0.1.0",
-  "description": "Eleven skills for YouTube scripts, packaging, research, retention, editing, planning, comments, SEO, chapters, Shorts, and channel audits.",
+  "version": "0.2.0",
+  "description": "Eleven upstream YouTube skills plus yt-caliks, the Caliks Art Academy entry point for SEO, packaging, Shorts, scripts, planning, research, retention, editing, comments, chapters, and audits.",
   "author": {
     "name": "Jake Schincariol"
   },
   "homepage": "https://github.com/Jakeschincariol/chatgpt-youtube-agent-skill",
   "repository": "https://github.com/jrvsuur-afk/chatgpt-youtube-agent-skill",
   "license": "MIT",
-  "keywords": ["youtube", "creator", "scripts", "seo", "shorts", "analytics"],
+  "keywords": ["youtube", "creator", "scripts", "seo", "shorts", "analytics", "yt-caliks", "caliks-art-academy"],
   "extensions": {
     "com.openai": {
       "interface": {
         "displayName": "YouTube Agent",
         "shortDescription": "Plan better YouTube videos",
-        "longDescription": "Use all eleven yt-* skills to plan uploads, write and score hooks, pair titles with thumbnails, research outliers, analyze retention, draft edit decisions, replies, descriptions, chapters, Shorts, and channel audits. Includes six local Python helpers. You review the output and publish it yourself.",
+        "longDescription": "Use yt-caliks as the Caliks Art Academy entry point: it reads the channel profile and routes to the right upstream skill. All eleven upstream yt-* skills remain available for scripts, packaging, research, retention, editing, planning, comments, SEO, chapters, Shorts, and audits. Includes six local Python helpers. You review the output and publish it yourself.",
         "developerName": "Jake Schincariol",
         "category": "Productivity",
         "capabilities": ["Interactive", "Write"],
