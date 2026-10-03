@@ -41,8 +41,9 @@ skill such as `yt-script`, `yt-package`, or `yt-audit` from the skill picker.
 path is relative to the repository root, not the manifest directory. Keep the two plugin
 manifests' metadata and interface fields synchronized when making future changes.
 
-For a ChatGPT package, put `plugin.json`, `.codex-plugin/`, `skills/`, `templates/`, and `LICENSE`
-inside a single `youtube-agent/` directory and archive that directory, including hidden files.
+For a ChatGPT package, put `plugin.json`, `.codex-plugin/`, `skills/`, `templates/`, `profiles/`,
+and `LICENSE` inside a single `youtube-agent/` directory and archive that directory, including
+hidden files.
 Use the host's plugin import flow. The repository configuration does not upload or install the
 plugin into a ChatGPT account.
 
@@ -90,6 +91,32 @@ folders into your repo's `.codex/skills/`.
 
 Copy `templates/voice.md` to `~/.codex/youtube/voice.md` and fill it in. Every skill reads it.
 Or send ChatGPT three of your own videos and say "write my voice profile from these".
+
+## Channel profiles
+
+[`profiles/caliks-art-academy.md`](profiles/caliks-art-academy.md) adds Turkish-first
+Shorts SEO rules only for **Çalık'S Art Academy**, including English, German, and Japanese
+titles/descriptions, topical tags, and fixed plus topical hashtags. It keeps titles short
+and focused on the verified subject, and uses current search or trend data only when you
+supply it. Select it explicitly:
+
+```text
+yt-seo skill'ini kullan. Önce profiles/caliks-art-academy.md dosyasını oku.
+Bu görev Çalık'S Art Academy için; tüm çıktı kurallarını bu profilden uygula.
+Aşağıdaki yapılandırılmış video analizini kaynak kabul et; ham videoyu yeniden analiz etme.
+Başlıklar kısa ve ana konuya odaklı olsun; jenerik ekleri otomatik kullanma.
+Belirsiz motif, stil, vücut bölgesi veya teknik bilgi uydurma.
+Türkçe açıklama en fazla iki kısa cümle; diğer dillerdeki açıklamalar da kısa ve doğal olsun.
+Varsa sağladığım güncel arama veya trend verisindeki ilgili terimlere öncelik ver;
+veri yoksa güncel trend iddiası üretme.
+Yalnızca profilin yedi bölümlük çıktısını ver; giriş, analiz veya gerekçe ekleme.
+[Video analizi]
+[Güncel arama terimleri veya trend verisi, varsa; yoksa bu satırı çıkar]
+```
+
+The path is relative to this checkout; use a readable checkout path or attach the profile
+if needed. Invoking `yt-seo` alone does not automatically load it. The eleven skills and
+the global voice profile remain separate.
 
 ## The tools
 
